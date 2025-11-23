@@ -1,0 +1,262 @@
+.app {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.app.shake {
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 32px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 37px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  transition: transform 0.2s;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+.theme-toggle:focus {
+  outline: 2px solid var(--border-color);
+  outline-offset: 2px;
+}
+
+.main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  flex: 1;
+  padding-bottom: 32px;
+}
+
+/* Wordle Board */
+.wordle-board {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.wordle-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+/* Tile Component */
+.tile {
+  width: 62px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 2px solid var(--border-color);
+  background-color: var(--tile-empty-bg);
+  color: var(--text-color);
+  transition: all 0.3s;
+  min-width: 62px;
+  min-height: 62px;
+}
+
+.tile-flip {
+  animation: flip 0.6s ease-in-out;
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+.tile.tile-correct {
+  background-color: var(--tile-correct) !important;
+  color: white !important;
+  border-color: var(--tile-correct) !important;
+}
+
+.tile.tile-present {
+  background-color: var(--tile-present) !important;
+  color: white !important;
+  border-color: var(--tile-present) !important;
+}
+
+.tile.tile-absent {
+  background-color: var(--tile-absent) !important;
+  color: white !important;
+  border-color: var(--tile-absent) !important;
+}
+
+/* Keyboard */
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.keyboard-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.key {
+  flex: 1;
+  height: 58px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--key-bg);
+  color: var(--key-text);
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  user-select: none;
+}
+
+.key:hover:not(:disabled) {
+  background-color: var(--key-hover);
+}
+
+.key:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.key:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.key-special {
+  flex: 1.5;
+  font-size: 12px;
+}
+
+.key-correct {
+  background-color: var(--key-correct);
+  color: white;
+}
+
+.key-present {
+  background-color: var(--key-present);
+  color: white;
+}
+
+.key-absent {
+  background-color: var(--key-absent);
+  color: white;
+}
+
+/* Messages */
+.message {
+  padding: 16px;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 16px;
+}
+
+.message-success {
+  background-color: var(--tile-correct);
+  color: white;
+}
+
+.message-error {
+  background-color: var(--tile-absent);
+  color: white;
+}
+
+.message strong {
+  font-weight: 700;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .tile {
+    width: 58px;
+    height: 58px;
+    font-size: 28px;
+  }
+
+  .key {
+    height: 50px;
+    font-size: 11px;
+  }
+
+  .header h1 {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 375px) {
+  .tile {
+    width: 52px;
+    height: 52px;
+    font-size: 24px;
+  }
+
+  .keyboard {
+    gap: 6px;
+  }
+
+  .keyboard-row {
+    gap: 4px;
+  }
+
+  .key {
+    height: 46px;
+    font-size: 10px;
+  }
+}
