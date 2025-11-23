@@ -1,0 +1,139 @@
+.how-to-play-content {
+  background: var(--bg-color);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 540px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--border-color);
+}
+
+.how-to-play-rules {
+  margin-bottom: 32px;
+}
+
+.main-rule {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 16px;
+}
+
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rules-list li {
+  font-size: 14px;
+  color: var(--text-color);
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--text-secondary);
+  font-weight: bold;
+}
+
+.examples-section {
+  border-top: 1px solid var(--border-color);
+  padding-top: 24px;
+  margin-bottom: 24px;
+}
+
+.examples-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 24px;
+}
+
+.example {
+  margin-bottom: 24px;
+}
+
+.example-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.example-tile {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 2px solid var(--border-color);
+  background-color: var(--tile-empty-bg);
+  color: var(--text-color);
+  border-radius: 4px;
+}
+
+.example-tile.tile-correct {
+  background-color: var(--tile-correct) !important;
+  color: white !important;
+  border-color: var(--tile-correct) !important;
+}
+
+.example-tile.tile-present {
+  background-color: var(--tile-present) !important;
+  color: white !important;
+  border-color: var(--tile-present) !important;
+}
+
+.example-tile.tile-absent {
+  background-color: var(--tile-absent) !important;
+  color: white !important;
+  border-color: var(--tile-absent) !important;
+}
+
+.example-text {
+  font-size: 14px;
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.example-text strong {
+  font-weight: 700;
+}
+
+.how-to-play-footer {
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+  text-align: center;
+}
+
+.how-to-play-footer p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .how-to-play-content {
+    padding: 24px;
+  }
+
+  .example-tile {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+}
+

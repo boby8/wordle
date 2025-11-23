@@ -19,6 +19,7 @@ export interface GameState {
   letterStates: Record<string, LetterState>;
   dailyWord: string;
   date: string;
+  isPracticeMode?: boolean;
 }
 
 export interface Statistics {

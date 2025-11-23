@@ -18,12 +18,13 @@ export function getDailyWord(): string {
   const index = diffDays % DAILY_WORDS.length;
   const dailyWord = DAILY_WORDS[index];
 
-  // Debug: Log today's word selection
-  console.log(
-    `[Word Selection] Date: ${today.toDateString()}, Days since start: ${diffDays}, Index: ${index}, Word: ${dailyWord}`
-  );
-
   return dailyWord;
+}
+
+// Get a random word for practice mode
+export function getRandomWord(): string {
+  const randomIndex = Math.floor(Math.random() * DAILY_WORDS.length);
+  return DAILY_WORDS[randomIndex];
 }
 
 // Compare guess word with target word and return tile states
@@ -47,14 +48,8 @@ export function compareWords(guess: string, target: string): Tile[] {
       tiles[i] = { letter, state: "correct" };
       usedIndices.add(i);
       targetLetterCounts[letter]--;
-      console.log(
-        `[compareWords] Position ${i}: '${letter}' = GREEN (matches target[${i}]='${targetUpper[i]}')`
-      );
     } else {
       tiles[i] = { letter, state: "absent" };
-      console.log(
-        `[compareWords] Position ${i}: '${letter}' vs '${targetUpper[i]}' - No match, initially absent`
-      );
     }
   }
 
@@ -66,20 +61,9 @@ export function compareWords(guess: string, target: string): Tile[] {
     if (targetLetterCounts[letter] > 0) {
       tiles[i].state = "present";
       targetLetterCounts[letter]--;
-      console.log(
-        `[compareWords] Position ${i}: '${letter}' = YELLOW (in word but wrong position)`
-      );
-    } else {
-      console.log(
-        `[compareWords] Position ${i}: '${letter}' = GRAY (not in word or already used)`
-      );
     }
   }
 
-  console.log(
-    `[compareWords] Final tiles for "${guess}" vs "${target}":`,
-    tiles.map((t, i) => `[${i}]${t.letter}:${t.state}`).join(", ")
-  );
   return tiles;
 }
 

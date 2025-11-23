@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   getDailyWord,
+  getRandomWord,
   compareWords,
   updateLetterStates,
 } from "../utils/gameLogic";
@@ -8,40 +9,66 @@ import { isValidWord } from "../data/words";
 import type { GameState, Guess, GameStatus } from "../types/game";
 
 const STORAGE_KEY = "wordle-game-state";
+const PRACTICE_STORAGE_KEY = "wordle-practice-state";
 const MAX_GUESSES = 6;
 const WORD_LENGTH = 5;
 
-export function useWordle() {
+export function useWordle(isPracticeMode: boolean = false) {
   const today = new Date().toDateString();
-  const dailyWord = getDailyWord();
+  const dailyWord = isPracticeMode ? getRandomWord() : getDailyWord();
 
   const [gameState, setGameState] = useState<GameState>(() => {
-    // Try to load from localStorage
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      // Reset if it's a new day
-      if (parsed.date === today) {
-        return parsed;
+    const storageKey = isPracticeMode ? PRACTICE_STORAGE_KEY : STORAGE_KEY;
+
+    if (isPracticeMode) {
+      // Practice mode: load saved game or create new one
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.isPracticeMode) {
+          return parsed;
+        }
       }
+      return {
+        currentGuess: "",
+        guesses: [],
+        status: "playing",
+        letterStates: {},
+        dailyWord,
+        date: today,
+        isPracticeMode: true,
+      };
+    } else {
+      // Daily mode: load saved game or create new one
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Reset if it's a new day
+        if (parsed.date === today && !parsed.isPracticeMode) {
+          return parsed;
+        }
+      }
+      return {
+        currentGuess: "",
+        guesses: [],
+        status: "playing",
+        letterStates: {},
+        dailyWord,
+        date: today,
+        isPracticeMode: false,
+      };
     }
-    // New game
-    return {
-      currentGuess: "",
-      guesses: [],
-      status: "playing",
-      letterStates: {},
-      dailyWord,
-      date: today,
-    };
   });
 
   // Save to localStorage whenever gameState changes
   useEffect(() => {
-    if (gameState.date === today) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+    const storageKey = isPracticeMode ? PRACTICE_STORAGE_KEY : STORAGE_KEY;
+    if (isPracticeMode) {
+      localStorage.setItem(storageKey, JSON.stringify(gameState));
+    } else if (gameState.date === today) {
+      localStorage.setItem(storageKey, JSON.stringify(gameState));
     }
-  }, [gameState, today]);
+  }, [gameState, today, isPracticeMode]);
 
   const addLetter = useCallback((letter: string) => {
     setGameState((prev) => {
@@ -117,10 +144,24 @@ export function useWordle() {
     return isValid;
   }, []);
 
+  const resetGame = useCallback(() => {
+    const newWord = isPracticeMode ? getRandomWord() : getDailyWord();
+    setGameState({
+      currentGuess: "",
+      guesses: [],
+      status: "playing",
+      letterStates: {},
+      dailyWord: newWord,
+      date: today,
+      isPracticeMode,
+    });
+  }, [isPracticeMode, today]);
+
   return {
     gameState,
     addLetter,
     removeLetter,
     submitGuess,
+    resetGame,
   };
 }
