@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useWordle } from "./hooks/useWordle";
 import { useTheme } from "./hooks/useTheme";
 import { useStatistics } from "./hooks/useStatistics";
@@ -89,25 +89,34 @@ function App() {
     isPracticeMode,
   ]);
 
-  const handleKeyPress = (key: string) => {
-    if (gameState.status !== "playing") return;
+  const handleKeyPress = useCallback(
+    (key: string) => {
+      if (gameState.status !== "playing") return;
 
-    if (key === "Enter") {
-      if (gameState.currentGuess.length === 5) {
-        const wasValid = submitGuess();
-        if (!wasValid) {
-          setShake(true);
-          setTimeout(() => setShake(false), 500);
+      if (key === "Enter") {
+        if (gameState.currentGuess.length === 5) {
+          const wasValid = submitGuess();
+          if (!wasValid) {
+            setShake(true);
+            setTimeout(() => setShake(false), 500);
+          }
         }
+      } else if (key === "Backspace") {
+        removeLetter();
+      } else {
+        addLetter(key);
       }
-    } else if (key === "Backspace") {
-      removeLetter();
-    } else {
-      addLetter(key);
-    }
-  };
+    },
+    [
+      gameState.status,
+      gameState.currentGuess.length,
+      submitGuess,
+      removeLetter,
+      addLetter,
+    ]
+  );
 
-  const handleShare = async () => {
+  const handleShare = useCallback(async () => {
     const guesses = gameState.status === "won" ? gameState.guesses.length : "X";
     const shareText = generateShareText(
       guesses === "X" ? 6 : guesses,
@@ -121,14 +130,21 @@ function App() {
       setShowShare(true);
       setTimeout(() => setShowShare(false), 2000);
     }
-  };
+  }, [gameState]);
+
+  const handleCloseStats = useCallback(() => setShowStats(false), []);
+  const handleCloseHowToPlay = useCallback(() => setShowHowToPlay(false), []);
+  const handleShowStats = useCallback(() => setShowStats(true), []);
+  const handleShowHowToPlay = useCallback(() => setShowHowToPlay(true), []);
+
+  const gameNumber = useMemo(() => getDayNumber(), []);
 
   return (
     <div className={`app ${shake ? "shake" : ""}`}>
       <header className="header">
         <button
           className="help-button"
-          onClick={() => setShowHowToPlay(true)}
+          onClick={handleShowHowToPlay}
           aria-label="How to Play"
           title="How to Play"
         >
@@ -143,7 +159,7 @@ function App() {
         <div className="header-right">
           <button
             className="stats-button"
-            onClick={() => setShowStats(true)}
+            onClick={handleShowStats}
             aria-label="Statistics"
             title="Statistics"
           >
@@ -183,7 +199,7 @@ function App() {
           <div className="message message-success">
             <div>🎉 You won! 🎉</div>
             <div className="message-subtitle">
-              {isPracticeMode ? "Practice" : `Wordle ${getDayNumber()}`}{" "}
+              {isPracticeMode ? "Practice" : `Wordle ${gameNumber}`}{" "}
               {gameState.guesses.length}/6
             </div>
             <div className="message-actions">
@@ -225,7 +241,7 @@ function App() {
       <StatisticsModal
         statistics={statistics}
         isOpen={showStats}
-        onClose={() => setShowStats(false)}
+        onClose={handleCloseStats}
         onReset={resetStatistics}
         todayGuesses={
           gameState.status !== "playing" ? gameState.guesses.length : undefined
@@ -240,10 +256,7 @@ function App() {
         onShare={handleShare}
       />
 
-      <HowToPlayModal
-        isOpen={showHowToPlay}
-        onClose={() => setShowHowToPlay(false)}
-      />
+      <HowToPlayModal isOpen={showHowToPlay} onClose={handleCloseHowToPlay} />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import type { GameState } from "../types/game";
 
 const KEYBOARD_ROWS = [
@@ -17,28 +18,34 @@ export function Keyboard({
   onKeyPress,
   disabled = false,
 }: KeyboardProps) {
-  const getKeyClass = (key: string): string => {
-    if (key === "ENTER" || key === "DELETE") {
-      return "key-special";
-    }
-    const letterState = gameState.letterStates[key];
-    if (letterState) {
-      return `key-${letterState}`;
-    }
-    return "";
-  };
+  const getKeyClass = useCallback(
+    (key: string): string => {
+      if (key === "ENTER" || key === "DELETE") {
+        return "key-special";
+      }
+      const letterState = gameState.letterStates[key];
+      if (letterState) {
+        return `key-${letterState}`;
+      }
+      return "";
+    },
+    [gameState.letterStates]
+  );
 
-  const handleKeyClick = (key: string) => {
-    if (disabled) return;
+  const handleKeyClick = useCallback(
+    (key: string) => {
+      if (disabled) return;
 
-    if (key === "ENTER") {
-      onKeyPress("Enter");
-    } else if (key === "DELETE") {
-      onKeyPress("Backspace");
-    } else {
-      onKeyPress(key);
-    }
-  };
+      if (key === "ENTER") {
+        onKeyPress("Enter");
+      } else if (key === "DELETE") {
+        onKeyPress("Backspace");
+      } else {
+        onKeyPress(key);
+      }
+    },
+    [disabled, onKeyPress]
+  );
 
   return (
     <div className="keyboard">
